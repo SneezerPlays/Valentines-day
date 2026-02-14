@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Love</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #ffd1dc, #ffb7c5);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            color: #8a1c4a;
+        }
+        
+        /* Password Modal */
+        .password-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 182, 193, 0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            transition: opacity 0.5s ease;
+        }
+        
+        .password-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            animation: bounceIn 1s forwards;
+        }
+        
+        .password-content h2 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: #d81b60;
+        }
+        
+        .password-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ffb7c5;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 16px;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        .password-input:focus {
+            border-color: #d81b60;
+        }
+        
+        .submit-btn {
+            background: #d81b60;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s, transform 0.2s;
+        }
+        
+        .submit-btn:hover {
+            background: #b71550;
+            transform: scale(1.05);
+        }
+        
+        /* Welcome Screen */
+        .welcome-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ffd1dc, #ffb7c5);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 99;
+            transition: opacity 0.8s ease;
+        }
+        
+        .welcome-message {
+            font-family: 'Dancing Script', cursive;
+            font-size: 48px;
+            color: #d81b60;
+            text-align: center;
+            animation: pulse 2s infinite, float 3s ease-in-out infinite;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Main Content */
+        .container {
+            width: 100%;
+            max-width: 900px;
+            padding: 20px;
+            margin-top: 50px;
+        }
+        
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .tab {
+            background: rgba(255, 255, 255, 0.7);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: #d81b60;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .tab:hover {
+            background: rgba(255, 255, 255, 0.9);
+            transform: translateY(-3px);
+        }
+        
+        .tab.active {
+            background: white;
+            color: #d81b60;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .content-area {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            min-height: 400px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Love Letter Tab */
+        .letter {
+            padding: 20px;
+            background: #fff5f7;
+            border-radius: 15px;
+            border: 2px dashed #ffb7c5;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .letter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .letter h3 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 28px;
+            color: #d81b60;
+        }
+        
+        .letter-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+        
+        .letter.expanded .letter-content {
+            max-height: 500px;
+        }
+        
+        /* Music Tab */
+        .song {
+            background: #f8e8ee;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .song-icon {
+            font-size: 24px;
+            color: #d81b60;
+        }
+        
+        .song-info h4 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        
+        .song-info p {
+            color: #888;
+            font-size: 14px;
+        }
+        
+        /* Notes Tab */
+        .note {
+            background: #fce4ec;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #d81b60;
+        }
+        
+        /* Gallery Tab */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .gallery-item {
+            border-radius: 10px;
+            overflow: hidden;
+            height: 200px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .gallery-item:hover {
+            transform: scale(1.05);
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        /* Decorative Elements */
+        .heart, .teddy-bear {
+            position: absolute;
+            z-index: -1;
+            opacity: 0.2;
+            pointer-events: none;
+        }
+        
+        .heart {
+            color: #d81b60;
+            font-size: 24px;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .teddy-bear {
+            font-size: 32px;
+            animation: float 8s ease-in-out infinite;
+        }
+        
+        /* Animations */
+        @keyframes bounceIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            60% { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .welcome-message {
+                font-size: 36px;
+            }
+            
+            .tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .tab {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .gallery {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Password Modal -->
+    <div class="password-modal" id="passwordModal">
+        <div class="password-content">
+            <h2>Enter the secret code</h2>
+            <input type="password" class="password-input" id="passwordInput" placeholder="Our special word...">
+            <button class="submit-btn" id="submitPassword">Enter</button>
+        </div>
+    </div>
+    
+    <!-- Welcome Screen -->
+    <div class="welcome-screen" id="welcomeScreen">
+        <h1 class="welcome-message">Welcome my love, enjoy your stay</h1>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="container" id="mainContent" style="display: none;">
+        <div class="tabs">
+            <button class="tab active" data-tab="love-letter">
+                <span>❤️</span> Love Letter
+            </button>
+            <button class="tab" data-tab="music">
+                <span>🎵</span> Music
+            </button>
+            <button class="tab" data-tab="notes">
+                <span>📝</span> Notes
+            </button>
+            <button class="tab" data-tab="gallery">
+                <span>🌷</span> Gallery
+            </button>
+        </div>
+        
+        <div class="content-area">
+            <!-- Love Letter Tab -->
+            <div class="tab-content active" id="love-letter">
+                <h2>My Dearest</h2>
+                <div class="letter" id="loveLetter">
+                    <div class="letter-header">
+                        <h3>A Letter For You🦋</h3>
+                        <span>👇 Click to open</span>
+                    </div>
+                    <div class="letter-content">
+                        <p>Mon coeur,</p>
+                        <p>Every day with you feels like a beautiful dream that I never want to wake up from. You are my first thought in the morning and your laughter is my favorite melody.</p>
+                        <p>I cherish every moment we spend together, from our silly jokes to our deep conversations under the bright moon. You've shown me what true happiness feels like, and I'm forever grateful to have you in my life.</p>
+                        <p> On this Valentine's Day and every day after, I choose you - Over and Over and over and over and over anova👀😂😘</p>
+                        <p>No matter where life takes us, always remember that my heart belongs to you. You are my Home</p>
+                        <p>Forever yours,</p>
+                        <p>Me</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Music Tab -->
+<div class="tab-content" id="music">
+    <h2>Because you’re my favorite feeling</h2>
+
+    <div class="vinyl-player">
+        <!-- Unlock button – click this FIRST if play fails -->
+        <div style="text-align:center; margin:20px 0;">
+            <button id="unlock-audio" 
+                    style="padding:14px 32px; font-size:1.1rem; background:#444; color:white; border:none; border-radius:50px; cursor:pointer;">
+                Unlock Sound (click if play does nothing)
+            </button>
+        </div>
+
+        <div class="records-container">
+            <div class="record-wrapper" data-index="0">
+                <div class="record" id="record-0">
+                    <img src="https://image2url.com/r2/default/images/1771058715887-c79bc02e-a662-4adf-8bca-8a9fb0fc7b92.jpg" 
+                         class="label" alt="JVKE">
+                    <div class="grooves"></div>
+                </div>
+                <div class="song-info">
+                    <div class="song-title">this is what falling in love feels like</div>
+                    <div class="song-artist">JVKE</div>
+                </div>
+            </div>
+
+            <div class="record-wrapper" data-index="1">
+                <div class="record" id="record-1">
+                    <img src="https://image2url.com/r2/default/images/1771058654166-d72e6619-5bf2-4ffe-85f9-2b13fd5aad6a.jpg" 
+                         class="label" alt="Everything Is Romantic">
+                    <div class="grooves"></div>
+                </div>
+                <div class="song-info">
+                    <div class="song-title">Everything Is Romantic</div>
+                    <div class="song-artist">Orchestra Club</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tonearm" id="tonearm">
+            <div class="arm"></div>
+            <div class="needle"></div>
+        </div>
+
+        <div class="controls">
+            <button id="play-pause" class="play-btn">▶ Play</button>
+            <div class="now-playing">
+                <div id="current-title">Select a record</div>
+                <div id="current-artist"></div>
+            </div>
+        </div>
+
+        <div class="progress-area">
+            <span id="time-now">0:00</span>
+            <div class="progress-track" id="progress-track">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <span id="time-total">--:--</span>
+        </div>
+
+        <audio id="audio-0" preload="none" crossorigin="anonymous"></audio>
+        <audio id="audio-1" preload="none" crossorigin="anonymous"></audio>
+    </div>
+</div>
+
+<style>
+    /* Same styles as before – keep your existing CSS */
+    /* ... paste your full CSS here if needed ... */
+    .vinyl-player { max-width:580px; margin:0 auto; position:relative; text-align:center; }
+    .records-container { display:flex; justify-content:center; gap:90px; margin-bottom:60px; }
+    .record-wrapper { cursor:pointer; transition:transform 0.4s; }
+    .record-wrapper.active { transform:translateY(-28px); }
+    .record { width:200px; height:200px; background:#0a0a0a; border-radius:50%; box-shadow:0 12px 36px #000c, inset 0 0 24px #111; position:relative; overflow:hidden; }
+    .label { width:108px; height:108px; border-radius:50%; position:absolute; inset:0; margin:auto; object-fit:cover; box-shadow:inset 0 0 20px #0008; }
+    .grooves { position:absolute; inset:0; border-radius:50%; background:repeating-radial-gradient(circle at 50% 50%, transparent 0 4px, #1a1a1a 4.5px 5px, transparent 5.5px); opacity:0.65; }
+    .record.spin { animation:rotate 9s linear infinite; }
+    @keyframes rotate { to { transform:rotate(360deg); } }
+    .tonearm { position:absolute; top:60px; left:50%; width:240px; height:24px; transform-origin:left center; transform:translateX(-50%) rotate(0deg); transition:transform 1.4s ease-out; z-index:5; }
+    .tonearm.active { transform:translateX(-50%) rotate(36deg); }
+    .arm { width:100%; height:100%; background:linear-gradient(90deg,#444,#222); border-radius:10px; box-shadow:0 6px 18px #000c; }
+    .needle { position:absolute; right:-8px; top:-18px; width:10px; height:52px; background:#a00; border-radius:5px 5px 0 0; transform:rotate(-16deg); box-shadow:2px 4px 8px #0008; }
+    .controls { display:flex; align-items:center; justify-content:center; gap:40px; margin:30px 0 24px; }
+    .play-btn { min-width:140px; padding:14px 32px; font-size:1.15rem; background:#e91e63; color:white; border:0; border-radius:999px; cursor:pointer; transition:all 0.25s; }
+    .play-btn:hover { background:#c2185b; transform:scale(1.06); }
+    .play-btn.playing { background:#4caf50; }
+    .progress-area { display:flex; align-items:center; gap:12px; padding:0 20px; font-size:0.92rem; color:#ccc; }
+    .progress-track { flex:1; height:7px; background:#222; border-radius:4px; overflow:hidden; cursor:pointer; }
+    .progress-fill { height:100%; width:0%; background:linear-gradient(90deg,#ff4081,#f50057); transition:width 0.18s ease-out; }
+</style>
+
+<script>
+// ────────────────────────────────────────────────
+// CONFIG – REPLACE THESE WITH YOUR REAL CATBOX LINKS
+// ────────────────────────────────────────────────
+const trackUrls = [
+    "https://files.catbox.moe/kgrzic.mp3",
+    "https://files.catbox.moe/een8ni.mp3"
+];
+
+// ────────────────────────────────────────────────
+// SETUP
+// ────────────────────────────────────────────────
+const players = [
+    document.getElementById('audio-0'),
+    document.getElementById('audio-1')
+];
+
+let currentTrack = -1;
+let isPlaying = false;
+
+const playBtn = document.getElementById('play-pause');
+const progressTrack = document.getElementById('progress-track');
+const progressFill = document.getElementById('progress-fill');
+const timeNow = document.getElementById('time-now');
+const timeTotal = document.getElementById('time-total');
+const titleEl = document.getElementById('current-title');
+const artistEl = document.getElementById('current-artist');
+const tonearm = document.getElementById('tonearm');
+
+
+// Time formatter
+function fmtTime(sec) {
+    if (!Number.isFinite(sec) || sec < 0) return '--:--';
+    const m = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60);
+    return m + ':' + sec.toString().padStart(2, '0');
+}
+
+// ────────────────────────────────────────────────
+// UNLOCK BUTTON (click this FIRST if play fails)
+// ────────────────────────────────────────────────
+document.getElementById('unlock-audio').addEventListener('click', async () => {
+    try {
+        // Silent dummy to satisfy gesture policy
+        const silent = new Audio('data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=');
+        silent.volume = 0;
+        await silent.play();
+        silent.pause();
+
+        alert('Sound unlocked! Now click a record, then Play.');
+    } catch (e) {
+        alert('Unlock failed – refresh page or try Chrome desktop.');
+        console.warn('Unlock error:', e);
+    }
+});
+
+// ────────────────────────────────────────────────
+// SELECT TRACK
+// ────────────────────────────────────────────────
+document.querySelectorAll('.record-wrapper').forEach(el => {
+    el.addEventListener('click', () => {
+        const idx = Number(el.dataset.index);
+        if (currentTrack === idx) return;
+
+        // Stop & reset previous
+        if (currentTrack !== -1) {
+            players[currentTrack].pause();
+            players[currentTrack].currentTime = 0;
+            document.getElementById(`record-${currentTrack}`).classList.remove('spin');
+        }
+
+        currentTrack = idx;
+
+        // Load source only now
+        const player = players[currentTrack];
+        player.src = trackUrls[currentTrack];
+        player.load();
+
+        // UI
+        document.querySelectorAll('.record-wrapper').forEach(w => w.classList.remove('active'));
+        el.classList.add('active');
+
+        titleEl.textContent = el.querySelector('.song-title').textContent;
+        artistEl.textContent = el.querySelector('.song-artist').textContent;
+
+        timeNow.textContent = '0:00';
+        timeTotal.textContent = '--:--';
+        progressFill.style.width = '0%';
+
+        tonearm.classList.remove('active');
+        playBtn.textContent = '▶ Play';
+        playBtn.classList.remove('playing');
+        isPlaying = false;
+
+        player.loop = true;  // ← Enables repeat / loop
+    });
+});
+
+// ────────────────────────────────────────────────
+// PLAY / PAUSE
+// ────────────────────────────────────────────────
+playBtn.addEventListener('click', async () => {
+    if (currentTrack === -1) {
+        alert('Select a record first');
+        return;
+    }
+
+    const audio = players[currentTrack];
+
+    if (isPlaying) {
+        audio.pause();
+        playBtn.textContent = '▶ Play';
+        playBtn.classList.remove('playing');
+        document.getElementById(`record-${currentTrack}`).classList.remove('spin');
+        tonearm.classList.remove('active');
+        isPlaying = false;
+        return;
+    }
+
+    try {
+        // Wait for readiness
+        if (audio.readyState < 2) {
+            await new Promise(r => audio.addEventListener('canplaythrough', r, {once:true}));
+        }
+
+        await audio.play();
+
+        playBtn.textContent = '⏸ Pause';
+        playBtn.classList.add('playing');
+        document.getElementById(`record-${currentTrack}`).classList.add('spin');
+        tonearm.classList.add('active');
+        isPlaying = true;
+
+    } catch (err) {
+        console.error('Play failed:', err.name, err.message);
+        alert(`Could not start playback (${err.name || 'Error'}).\n\nTry:\n• Click record again\n• Refresh page\n• Use Chrome on computer`);
+    }
+});
+
+// ────────────────────────────────────────────────
+// PROGRESS
+// ────────────────────────────────────────────────
+function updateUI() {
+    if (currentTrack === -1) return;
+    const a = players[currentTrack];
+
+    if (a.duration) {
+        const pct = (a.currentTime / a.duration) * 100;
+        progressFill.style.width = pct + '%';
+        timeNow.textContent = fmtTime(a.currentTime);
+        timeTotal.textContent = fmtTime(a.duration);
+    }
+}
+
+players.forEach(p => {
+    p.addEventListener('timeupdate', updateUI);
+    p.addEventListener('loadedmetadata', updateUI);
+    p.addEventListener('ended', () => {
+        playBtn.textContent = '▶ Play';
+        playBtn.classList.remove('playing');
+        document.getElementById(`record-${currentTrack}`).classList.remove('spin');
+        tonearm.classList.remove('active');
+        isPlaying = false;
+    });
+});
+
+// Seek
+progressTrack.addEventListener('click', e => {
+    if (currentTrack === -1) return;
+    const rect = progressTrack.getBoundingClientRect();
+    const pos = (e.clientX - rect.left) / rect.width;
+    players[currentTrack].currentTime = pos * players[currentTrack].duration;
+});
+
+</script>
+            
+            <!-- Notes Tab -->
+            <div class="tab-content" id="notes">
+                <h2>Some reminders</h2>
+                <div class="note">
+                    <p>Take care always</p>
+                </div>
+                <div class="note">
+                    <p>Eat on time</p>
+                </div>
+                <div class="note">
+                    <p>Drink water</p>
+                </div>
+                <div class="note">
+                    <p>You're mine.. always</p>
+                </div>
+            </div>
+            
+            <!-- Gallery Tab -->
+            <div class="tab-content" id="gallery">
+                <h2>Flowers for you</h2>
+                <div class="gallery">
+                    <div class="gallery-item">
+                        <img src="https://image2url.com/r2/default/images/1771054726676-7c97e746-75bc-406b-89ec-6ee690383520.jfif" alt="Bouquet of delicate pink tulips with soft green leaves">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/73632299-5dde-4ded-805a-88a7dcb4b5e4.png" alt="Beautiful pink tulips in a glass vase with morning dew">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="https://image2url.com/r2/default/images/1771054809900-8d64ac9a-84df-4b31-909f-9a4d67b96eb4.jfif" alt="Fluffy pink peony flowers with lush foliage">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="https://image2url.com/r2/default/images/1771054987916-3e4ab9d9-b5ff-4305-b4fc-69606b573ed3.jfif" alt="Branch of pink cherry blossoms against a blue sky">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="https://image2url.com/r2/default/images/1771054836017-57e0bcff-b8ce-4669-a75a-94308e0dbba8.jfif" alt="Cluster of light pink carnations with delicate petals">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="https://image2url.com/r2/default/images/1771054887723-96730170-ada7-48c5-96d0-0e8351e0d7ff.jfif" alt="Vibrant pink azalea flowers covering a garden bush">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Decorative elements -->
+    <div class="heart" style="top: 10%; left: 5%;">❤️</div>
+    <div class="heart" style="top: 20%; right: 10%;">❤️</div>
+    <div class="heart" style="bottom: 15%; left: 15%;">❤️</div>
+    <div class="teddy-bear" style="top: 30%; left: 10%;">🦋</div>
+    <div class="teddy-bear" style="bottom: 10%; right: 5%;">🦋</div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Password check
+            const passwordModal = document.getElementById('passwordModal');
+            const welcomeScreen = document.getElementById('welcomeScreen');
+            const mainContent = document.getElementById('mainContent');
+            const passwordInput = document.getElementById('passwordInput');
+            const submitPassword = document.getElementById('submitPassword');
+            
+            submitPassword.addEventListener('click', function() {
+                if (passwordInput.value.toLowerCase() === 'sumonu') {
+                    passwordModal.style.opacity = '0';
+                    setTimeout(() => {
+                        passwordModal.style.display = 'none';
+                        welcomeScreen.style.display = 'flex';
+                        
+                        setTimeout(() => {
+                            welcomeScreen.style.opacity = '0';
+                            setTimeout(() => {
+                                welcomeScreen.style.display = 'none';
+                                mainContent.style.display = 'block';
+                            }, 800);
+                        }, 2500);
+                    }, 500);
+                } else {
+                    passwordInput.value = '';
+                    passwordInput.placeholder = 'Try again, my love...';
+                    passwordInput.style.borderColor = '#ff4d4d';
+                    setTimeout(() => {
+                        passwordInput.style.borderColor = '#ffb7c5';
+                        passwordInput.placeholder = 'Our special word...';
+                    }, 1500);
+                }
+            });
+            
+            // Allow Enter key to submit password
+            passwordInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    submitPassword.click();
+                }
+            });
+            
+            // Tab switching
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const targetTab = this.getAttribute('data-tab');
+                    
+                    // Update active tab
+                    tabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show corresponding content
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                        if (content.id === targetTab) {
+                            content.classList.add('active');
+                        }
+                    });
+                });
+            });
+            
+            // Expandable love letter
+            const loveLetter = document.getElementById('loveLetter');
+            loveLetter.addEventListener('click', function() {
+                this.classList.toggle('expanded');
+            });
+            
+            // Add floating decorative elements
+            function addFloatingElements() {
+                for (let i = 0; i < 15; i++) {
+                    const heart = document.createElement('div');
+                    heart.classList.add('heart');
+                    heart.innerHTML = '❤️';
+                    heart.style.left = Math.random() * 100 + '%';
+                    heart.style.top = Math.random() * 100 + '%';
+                    heart.style.animationDelay = Math.random() * 5 + 's';
+                    document.body.appendChild(heart);
+                }
+                
+                for (let i = 0; i < 5; i++) {
+                    const teddy = document.createElement('div');
+                    teddy.classList.add('teddy-bear');
+                    teddy.innerHTML = '🧸';
+                    teddy.style.left = Math.random() * 100 + '%';
+                    teddy.style.top = Math.random() * 100 + '%';
+                    teddy.style.animationDelay = Math.random() * 5 + 's';
+                    document.body.appendChild(teddy);
+                }
+            }
+            
+            addFloatingElements();
+        });
+    </script>
+</body>
+</html>
